@@ -746,7 +746,7 @@ public function createMaintenance($MaintenanceArray)
 
     public function convertDDMMYYtoYYMMDD($bookingDate)
     {
-        $returnBookingDate = "0000-00-00";
+    $returnBookingDate = "0000-00-00";
         if ($bookingDate != null) {
             if ($bookingDate != "" && $bookingDate != "00-00-0000") {
                 $returnBookingDateArray = explode("-", $bookingDate);

@@ -343,7 +343,7 @@ class Sales extends CI_Controller
 		$lowStockproductArray = $this->pos_model->getlowStockProductList($retailerShowRoomId);
 		//print_r($lowStockproductArray);
 		$dataheader['lowStockproductArray']= $lowStockproductArray;
-        $this->load->view('sales/getReportInLowStock',$dataheader);
+        	$this->load->view('sales/getReportInLowStock',$dataheader);
     }
     public function reportsajax()
     {

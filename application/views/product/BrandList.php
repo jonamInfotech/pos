@@ -149,7 +149,7 @@
                     </button>
                 </td>
                 <td>
-                    <button class="btn btn-danger waves-effect waves-light" type="button" onclick="deleteProductsMaster('<?php echo $typeList; ?>','submit=<?php echo $typeList; ?>&actionType=Delete&actionId=<?php echo $categoryTypeId; ?>','<?php echo $deletUrl; ?>')">
+                    <button class="btn btn-default waves-effect waves-light btn-sm" id="sa-warning" type="button" onclick="deleteProductsMaster('<?php echo $typeList; ?>','submit=<?php echo $typeList; ?>&actionType=Delete&actionId=<?php echo $categoryTypeId; ?>','<?php echo $deletUrl; ?>')">
                         Delete
                     </button>
                 </td>

@@ -187,6 +187,7 @@ class Product extends CI_Controller
 
             $size = $this->input->post('size');
             $createdAt = date("Y-m-d H:i:s");
+
             $SizeDetailsArray = array('size' => $size, 'sizeid' => $actionId, 'adminid' => $adminid, 'createdAt' => $createdAt);
 
             $output = array('status' => "3", 'message' => "Invalid Request");
@@ -308,7 +309,8 @@ class Product extends CI_Controller
 
             $Reasons = $this->input->post('Reason');
             $Amount = $this->input->post('Amount');
-            $Date = $this->input->post('Date');
+
+           $Date = date( "Y-m-d", strtotime( $this->input->post('Date')) );
             $createdAt = date("Y-m-d H:i:s");
             $MaintenanceArray = array('Reasons' => $Reasons, 'Amount' => $Amount,'Date' => $Date, 'adminid' => $adminid,'showroomId'  => $showroomId, 'createdAt' => $createdAt);
 
