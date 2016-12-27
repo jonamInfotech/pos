@@ -1076,6 +1076,19 @@ public function createMaintenance($MaintenanceArray)
 //            print_r($productListArray);
         return $productListArray;
     }
+	public function createAttendance($salesManAttendancearray)
+    {
+        $sql = "INSERT INTO tbl_Attendance (salesManId, AttendanceDate,showroomId,adminId,createdAt) " . "VALUES (" . $this->db->escape($salesManAttendancearray['salesManarray']) . "," . $this->db->escape($salesManAttendancearray['Attedate']) . "," . $this->db->escape($salesManAttendancearray['showroomId']) . "," . $this->db->escape($salesManAttendancearray['adminid']) . "," . $this->db->escape($salesManAttendancearray['createdAt']) . ")";
+        $this->db->query($sql);
+    }
+ public function getsalesmanList($showroomId){
+        $salesmanList = "";
+        $sql = "SELECT name,userid FROM tbl_user WHERE usertypeid in(4,5) and retailerShowRoomId='".$showroomId."'";
+        $cateQuery = $this->db->query($sql);
+        $returnValue = $cateQuery->result_array();
+	
+        return $returnValue;
+    }
 }
 
 ?>

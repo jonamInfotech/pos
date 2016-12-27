@@ -53,7 +53,7 @@
 <script src="<?php echo base_url(); ?>assets/plugins/datatables/dataTables.responsive.min.js"></script>
 <script src="<?php echo base_url(); ?>assets/plugins/datatables/responsive.bootstrap.min.js"></script>
 
-
+<script src="<?php echo base_url(); ?>assets/pages/jquery.multi-select.js"></script>
 <!-- Custom main Js -->
 <script src="<?php echo base_url(); ?>assets/js/jquery.core.js"></script>
 <script src="<?php echo base_url(); ?>assets/js/jquery.app.js"></script>
@@ -66,7 +66,6 @@
 
 <!----Select2----------->
 <script src="<?php echo base_url(); ?>assets/plugins/select2/select2.min.js" type="text/javascript"></script>
-<script src="<?php echo base_url(); ?>assets/plugins/multiselect/js/jquery.multi-select.js" type="text/javascript"></script>
 
 
 <!-- Notification js -->

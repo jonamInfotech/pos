@@ -972,10 +972,32 @@ class Product extends CI_Controller
 
         echo $stringOfRecord;
     }
-    public function Attendance(){
+   public function Attendance(){
+		$showroomId = $this->session->userdata('retailerShowRoomId');
+		$sessionUserTypeIdIsset = $this->session->has_userdata('usertypeid');
+		$adminid = "0";
+        	$submit = $this->input->get_post('submit');
+		if($submit=="Submit"){
+				$createdAt = date("Y-m-d H:i:s");
+				$salesManarray =implode(",",$this->input->get_post('salesManarray')); ;
+				$Attedate = $this->users_model->convertDDMMYYtoYYMMDD($this->input->get_post('Attedate'));
+				$salesManAttendancearray = array('salesManarray'=>$salesManarray,'Attedate' => $Attedate,'showroomId' => $showroomId,  'adminid' => $adminid, 'createdAt' => $createdAt);
+				$createAttendance = $userTypeArray = $this->users_model->createAttendance($salesManAttendancearray); 
+				
+				//$this->session->set_flashdata('output', $output);
+				//redirect(base_url() . "Product/Attendance");
+
+
+			}
+
+	
+	 $salesmanList = $this->users_model->getsalesmanList($showroomId);
+               	$dataheader['salesmanList'] = $salesmanList;
         	$dataheader['title'] = "Attendance";
 		$this->load->view('layout/backend_header', $dataheader);
+
         	$this->load->view('layout/backend_menu');
+
 		$this->load->view('product/Attendance');
         	$this->load->view('layout/backend_footer');
 
