@@ -1081,8 +1081,18 @@ public function createMaintenance($MaintenanceArray)
         $sql = "INSERT INTO tbl_Attendance (salesManId, AttendanceDate,showroomId,adminId,createdAt) " . "VALUES (" . $this->db->escape($salesManAttendancearray['salesManarray']) . "," . $this->db->escape($salesManAttendancearray['Attedate']) . "," . $this->db->escape($salesManAttendancearray['showroomId']) . "," . $this->db->escape($salesManAttendancearray['adminid']) . "," . $this->db->escape($salesManAttendancearray['createdAt']) . ")";
         $this->db->query($sql);
     }
- public function getsalesmanList($showroomId){
-        $salesmanList = "";
+	public function getAttendanceList($showroomId,$date){
+	$salesmanList = "";
+
+        echo $sql = "SELECT j.salesManId FROM tbl_Attendance j WHERE j.showroomId='".$showroomId."' and j.AttendanceDate='".$date."'";
+        $AttendanceQuery = $this->db->query($sql);
+        $returnValue = $AttendanceQuery->result_array();
+	echo "<br><br><br><br><br><br><br>";
+	print_r($returnValue);
+        return $returnValue;	
+	}
+ 	public function getsalesmanList($showroomId){
+
         $sql = "SELECT name,userid FROM tbl_user WHERE usertypeid in(4,5) and retailerShowRoomId='".$showroomId."'";
         $cateQuery = $this->db->query($sql);
         $returnValue = $cateQuery->result_array();

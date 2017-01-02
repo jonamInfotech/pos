@@ -977,21 +977,24 @@ class Product extends CI_Controller
 		$sessionUserTypeIdIsset = $this->session->has_userdata('usertypeid');
 		$adminid = "0";
         	$submit = $this->input->get_post('submit');
-		if($submit=="Submit"){
+		$date = date("Y-m-d");
+		$getAttendanceList =$this->users_model->getAttendanceList($showroomId,$date);
+echo "<br><br><br><br><br><br><br>";
+	print_r($_REQUEST); 
+		if($submit=="Submit")
+		{
 				$createdAt = date("Y-m-d H:i:s");
-				$salesManarray =implode(",",$this->input->get_post('salesManarray')); ;
-				$Attedate = $this->users_model->convertDDMMYYtoYYMMDD($this->input->get_post('Attedate'));
+				$salesManarray =implode(",",$this->input->get_post('salesManarray')); 
+				$attdate=$this->input->get_post('Attedate');
+				echo $Attedateold= str_replace("/","-",$attdate);
+				echo $Attedate = $this->users_model->convertDDMMYYtoYYMMDD($Attedateold);
+
 				$salesManAttendancearray = array('salesManarray'=>$salesManarray,'Attedate' => $Attedate,'showroomId' => $showroomId,  'adminid' => $adminid, 'createdAt' => $createdAt);
-				$createAttendance = $userTypeArray = $this->users_model->createAttendance($salesManAttendancearray); 
-				
-				//$this->session->set_flashdata('output', $output);
-				//redirect(base_url() . "Product/Attendance");
-
-
-			}
+				$createAttendance = $this->users_model->createAttendance($salesManAttendancearray); 
+		}
 
 	
-	 $salesmanList = $this->users_model->getsalesmanList($showroomId);
+	 	$salesmanList = $this->users_model->getsalesmanList($showroomId);
                	$dataheader['salesmanList'] = $salesmanList;
         	$dataheader['title'] = "Attendance";
 		$this->load->view('layout/backend_header', $dataheader);

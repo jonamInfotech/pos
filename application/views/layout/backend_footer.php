@@ -116,7 +116,8 @@
 
     jQuery('.datepicker-autoclose').datepicker({
         autoclose: true,
-        todayHighlight: true
+        todayHighlight: true,
+dateFormat: 'yy-mm-dd'
     });
 
     $(".select2").select2();
