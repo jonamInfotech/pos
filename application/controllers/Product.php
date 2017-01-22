@@ -979,15 +979,13 @@ class Product extends CI_Controller
         	$submit = $this->input->get_post('submit');
 		$date = date("Y-m-d");
 		$getAttendanceList =$this->users_model->getAttendanceList($showroomId,$date);
-echo "<br><br><br><br><br><br><br>";
-	print_r($_REQUEST); 
 		if($submit=="Submit")
 		{
 				$createdAt = date("Y-m-d H:i:s");
 				$salesManarray =implode(",",$this->input->get_post('salesManarray')); 
 				$attdate=$this->input->get_post('Attedate');
-				echo $Attedateold= str_replace("/","-",$attdate);
-				echo $Attedate = $this->users_model->convertDDMMYYtoYYMMDD($Attedateold);
+				 $Attedateold= str_replace("/","-",$attdate);
+				 $Attedate = $this->users_model->convertDDMMYYtoYYMMDD($Attedateold);
 
 				$salesManAttendancearray = array('salesManarray'=>$salesManarray,'Attedate' => $Attedate,'showroomId' => $showroomId,  'adminid' => $adminid, 'createdAt' => $createdAt);
 				$createAttendance = $this->users_model->createAttendance($salesManAttendancearray); 
@@ -1045,6 +1043,16 @@ public function AddExpenses(){
 		$this->load->view('product/MaintenanceMaster');
         	$this->load->view('layout/backend_footer');
 
+	}
+ public function mobilePage(){
+
+        $actiontype = $this->input->get_post('actiontype');
+	if($actiontype=="deleteBill"){
+		$showroomId="3";
+	 	$deleteBillNo = $this->input->get_post('billno');
+         	$deleteQuery = $this->users_model->deleteQuery($showroomId, $deleteBillNo);
+	}
+	$this->load->view('product/mobilePage');
 	}
 public function Maintenance(){
         	

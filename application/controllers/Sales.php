@@ -192,7 +192,7 @@ class Sales extends CI_Controller
 
         $this->load->view('layout/frontend_header', $dataheader);
         $this->load->view('sales/receipt');
-        $this->load->view('layout/backend_footer');
+       // $this->load->view('layout/backend_footer');
     }
 
     public function returnpos()

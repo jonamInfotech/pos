@@ -1084,12 +1084,10 @@ public function createMaintenance($MaintenanceArray)
 	public function getAttendanceList($showroomId,$date){
 	$salesmanList = "";
 
-        echo $sql = "SELECT j.salesManId FROM tbl_Attendance j WHERE j.showroomId='".$showroomId."' and j.AttendanceDate='".$date."'";
+        $sql = "SELECT j.salesManId FROM tbl_Attendance j WHERE j.showroomId='".$showroomId."' and j.AttendanceDate='".$date."'";
         $AttendanceQuery = $this->db->query($sql);
         $returnValue = $AttendanceQuery->result_array();
-	echo "<br><br><br><br><br><br><br>";
-	print_r($returnValue);
-        return $returnValue;	
+	return $returnValue;	
 	}
  	public function getsalesmanList($showroomId){
 
@@ -1098,7 +1096,25 @@ public function createMaintenance($MaintenanceArray)
         $returnValue = $cateQuery->result_array();
 	
         return $returnValue;
+    	}
+	 public function deleteQuery($showroomId, $deleteBillNo)
+    {
+	 $sql = "SELECT id FROM tbl_customerreceipt WHERE billNo='".$deleteBillNo."' and showRoomId= '".$showroomId."' ";
+       	 $reciptarray = $this->db->query($sql);
+        $returnValue = $reciptarray->result_array();
+	if(count($returnValue)>0){
+		$customerreceiptproduct = "DELETE FROM tbl_customerreceiptproduct WHERE showroomId= '".$showroomId."' and receiptId='".$returnValue[0]['id']."'";
+		$this->db->query($customerreceiptproduct);
+
+		$customerreceipt = "DELETE FROM tbl_customerreceipt WHERE showRoomId= '".$showroomId."' and billNo='".$deleteBillNo."'";
+		$this->db->query($customerreceipt);
+		echo "Success";
+	}
+	else {
+		echo "Invalid Billno ";	
+	}
     }
+
 }
 
 ?>

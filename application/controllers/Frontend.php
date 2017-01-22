@@ -131,21 +131,35 @@ class Frontend extends CI_Controller
 
     public function checkLogin()
     {
-        $username = $this->input->post('userName');
-        $userpassword = $this->input->post('password');
+        
+       	$fromApp = $this->input->get_post('fromApp');
+	if($fromApp=='appLogin'){
+		 $username = $this->input->get_post('username');
+		 $userpassword = $this->input->get_post('password');	
 
-        $userCredentialArray = array('username' => $username, 'userpassword' => $userpassword);
-        $userCredential = $this->users_model->checkUserCredential($userCredentialArray);
-        if (count($userCredential) > 0) {
+		$userCredentialArray = array('username' => $username, 'userpassword' => $userpassword);
+		$userCredential = $this->users_model->checkUserCredential($userCredentialArray);
+		if (count($userCredential) > 0) {
 
-            $this->session->set_userdata($userCredential);
-            $this->users_model->updateLastlogin($userCredential['userid']);
-            redirect($userCredential['redirecturl']);
-        } else {
-            $output = array('status' => "2", 'message' => "Invalid Login!!");
-            $this->session->set_flashdata('output', $output);
-            redirect(base_url());
-        }
+            		echo json_encode($userCredential);
+		} 
+	}
+	else{
+		$username = $this->input->post('userName');
+		$userpassword = $this->input->post('password');
+		$userCredentialArray = array('username' => $username, 'userpassword' => $userpassword);
+		$userCredential = $this->users_model->checkUserCredential($userCredentialArray);
+		if (count($userCredential) > 0) {
+
+			$this->session->set_userdata($userCredential);
+			$this->users_model->updateLastlogin($userCredential['userid']);
+			redirect($userCredential['redirecturl']);
+		} else {
+			$output = array('status' => "2", 'message' => "Invalid Login!!");
+			$this->session->set_flashdata('output', $output);
+			redirect(base_url());
+		}
+	}
     }
 
     public function logout()
