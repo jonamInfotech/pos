@@ -175,6 +175,7 @@
                                     <div class="col-sm-3">Return Amount</div>
                                     <div class="col-sm-9">
                                         <input type="text" class="form-control" name="returnamount" id="returnamount" value="0" readonly>
+                                        <input type="hidden" class="form-control" name="returnamountnew" id="returnamountnew" value="0" readonly>
                                     </div>
                                 </div>
 	
@@ -444,8 +445,10 @@ function getProduct(barcode) {
 
             originalbeforeTotal = parseFloat($("#billprice_" + rowId).val()) * parseFloat($("#existBillQuantity_" + rowId).val());
             originalproductTotal = (parseFloat(originalbeforeTotal) - (parseFloat(originalbeforeTotal) * (parseFloat($("#billdisc_" + rowId).val()) / 100)));
+		
+		document.getElementById("returnamountnew").value=originalproductTotal+parseFloat($('#returnamount').val());
 
-            document.getElementById("returnamount").value =  (parseFloat(originalproductTotal) - parseFloat(productTotal));
+            document.getElementById("returnamount").value =  (parseFloat($('#returnamountnew').val()) - parseFloat(productTotal));
 
         }
         else {
