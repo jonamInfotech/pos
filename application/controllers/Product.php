@@ -1044,6 +1044,43 @@ public function AddExpenses(){
         	$this->load->view('layout/backend_footer');
 
 	}
+public function Migration(){
+
+		$getMigiraton =$this->users_model->getMigiraton();
+	$this->load->view('product/Migration');
+
+
+	}
+public function dailyPayment(){
+		$showroomId = $this->session->userdata('retailerShowRoomId');
+		$adminid = "0";
+		$salesmanList = $this->users_model->getsalesmanList($showroomId);
+               	$dataheader['salesmanList'] = $salesmanList;
+		$createdailyPayment='';
+		$submit=$this->input->get_post('submit');
+		if($submit=="Submit")
+		{
+				$createdAt = date("Y-m-d H:i:s");
+				$Paidby=$this->input->get_post('Paidby');
+				$Amount=$this->input->get_post('Amount');
+				$Date=$this->input->get_post('Date');
+				$Description=$this->input->get_post('Description');
+ 				$Datenew= str_replace("/","-",$Date);
+				 $DatenewOne = $this->users_model->convertDDMMYYtoYYMMDDnew($Datenew);
+				
+				$dailyPaymentarray = array('Paidby'=>$Paidby,'Amount' => $Amount,'DatenewOne' => $DatenewOne,  'Description' => $Description,'showroomId' => $showroomId, 'adminid' => $adminid, 'createdAt' => $createdAt);
+				$createdailyPayment = $this->users_model->createdailyPayment($dailyPaymentarray); 
+		}
+		$dataheader['msg'] = $createdailyPayment;
+		$dataheader['title'] = "Daily Payment";
+		$this->load->view('layout/backend_header', $dataheader);
+        	$this->load->view('layout/backend_menu');
+		$this->load->view('product/dailyPayment');
+        	$this->load->view('layout/backend_footer');
+
+
+
+	}
  public function mobilePage(){
 
         $actiontype = $this->input->get_post('actiontype');

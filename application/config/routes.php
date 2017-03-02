@@ -96,6 +96,8 @@ $route['AddExpenses'] = 'Product/AddExpenses';
 $route['Maintenance'] = 'Product/Maintenance';
 $route['MaintenanceMaster'] = 'Product/MaintenanceMaster';
 $route['mobilePage'] = 'Product/mobilePage';
+$route['Migration'] = 'Product/Migration';
+$route['dailyPayment'] = 'Product/dailyPayment';
 
 //Sales
 $route['pos'] = 'sales/pos';

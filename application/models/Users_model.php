@@ -409,6 +409,7 @@ class Users_model extends CI_Model
 
             $k++;
         }
+echo count($ProductList);
 //        echo "<pre>";
 //        print_r($ProductList);
 //        echo "</pre>";
@@ -757,7 +758,19 @@ public function createMaintenance($MaintenanceArray)
         }
         return $returnBookingDate;
     }
-
+ public function convertDDMMYYtoYYMMDDnew($bookingDate)
+    {
+    $returnBookingDate = "0000-00-00";
+        if ($bookingDate != null) {
+            if ($bookingDate != "" && $bookingDate != "00-00-0000") {
+                $returnBookingDateArray = explode("-", $bookingDate);
+                if (count($returnBookingDateArray) > 0) {
+                    $returnBookingDate = $returnBookingDateArray[2] . "-" . $returnBookingDateArray[0] . "-" . $returnBookingDateArray[1];
+                }
+            }
+        }
+        return $returnBookingDate;
+    }
     public function createSizeMaster($SizeDetailsArray)
     {
         $sql = "INSERT INTO tbl_sizemaster (size,adminid,createdat) " . "VALUES (" . $this->db->escape($SizeDetailsArray['size']) . "," . $this->db->escape($SizeDetailsArray['adminid']) . "," . $this->db->escape($SizeDetailsArray['createdAt']) . ")";
@@ -1089,7 +1102,21 @@ public function createMaintenance($MaintenanceArray)
         $returnValue = $AttendanceQuery->result_array();
 	return $returnValue;	
 	}
- 	public function getsalesmanList($showroomId){
+public function getMigiraton(){
+	//$sql = "SELECT j.barcode FROM Mens k INNER JOIN tbl_product j ON j.barcode = k.barcodeNew WHERE k.barcodeNew IS NOT NULL AND j.existingProcode IS NOT NULL ";
+	$sql = "SELECT j.barcode FROM tbl_product j WHERE j.active='newproduct'  ";
+        $result = $this->db->query($sql);
+        $returnValue = $result->result_array();
+ 	echo count($returnValue);
+	$uids = Array();
+	foreach($returnValue as $u){ $uids[] = $u['barcode'];
+ $list = implode("','",$uids);
+	$sqlnewupdate = "UPDATE `tbl_product` SET `active`='active' where `barcode`in('".$list."') ";
+$result = $this->db->query($sqlnewupdate);	
+	}
+
+       	} 
+	public function getsalesmanList($showroomId){
 
         $sql = "SELECT name,userid FROM tbl_user WHERE usertypeid in(4,5) and retailerShowRoomId='".$showroomId."'";
         $cateQuery = $this->db->query($sql);
@@ -1113,6 +1140,13 @@ public function createMaintenance($MaintenanceArray)
 	else {
 		echo "Invalid Billno ";	
 	}
+    }
+	 public function createdailyPayment($dailyPaymentarray)
+    {
+        $sql = "INSERT INTO tbl_dailySalesPament (Paidby,totalAmount,paidDate,description,showroomId,adminId,createdAt) " . "VALUES (" . $this->db->escape($dailyPaymentarray['Paidby']) . "," . $this->db->escape($dailyPaymentarray['Amount']) . "," . $this->db->escape($dailyPaymentarray['DatenewOne']) . "," . $this->db->escape($dailyPaymentarray['Description']) . "," . $this->db->escape($dailyPaymentarray['showroomId']) . "," . $this->db->escape($dailyPaymentarray['adminid']) . "," . $this->db->escape($dailyPaymentarray['createdAt']) . ")";
+        $this->db->query($sql);
+	$msg="success";
+return $msg;
     }
 
 }

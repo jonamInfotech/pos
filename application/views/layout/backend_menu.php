@@ -75,6 +75,7 @@
                           <li><a href="<?php echo base_url(); ?>Product/Attendance">Attendance</a></li>
                           <li><a href="<?php echo base_url(); ?>Product/dailyexpenses">Daily Expenses </a></li>
                           <li><a href="<?php echo base_url(); ?>Product/MaintenanceMaster">Maintenance Master</a></li>
+<li><a href="<?php echo base_url(); ?>Product/dailyPayment">Daily Payment Master</a></li>
                         </ul>
                     </li>
                     <li class="has-submenu">

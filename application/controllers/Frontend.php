@@ -140,7 +140,9 @@ class Frontend extends CI_Controller
 		$userCredentialArray = array('username' => $username, 'userpassword' => $userpassword);
 		$userCredential = $this->users_model->checkUserCredential($userCredentialArray);
 		if (count($userCredential) > 0) {
-
+			header('Access-Control-Allow-Origin: https://not-example.com');
+			header('Access-Control-Allow-Credentials: true');
+			header("Content-type: application/json");
             		echo json_encode($userCredential);
 		} 
 	}
