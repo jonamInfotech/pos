@@ -502,6 +502,10 @@ class Product extends CI_Controller
 	else if ($type == "MaintenanceList") {
 			$MaintenanceList = $this->users_model->getMaintenanceList($adminid, $actionId);
 		}
+	else if($type=="changeStatus") {
+		$productid = $this->input->get_post('productid');
+            	$BrandList = $this->users_model->changeStatus($adminid, $productid);
+		}
         $dataheader['typeList'] = $type;
         $dataheader['SizeList'] = $SizeList;
         $dataheader['BrandList'] = $BrandList;
@@ -961,6 +965,48 @@ class Product extends CI_Controller
             $avalableQty = $ProductList[$m]['avalableQty'];
 
             $stringOfRecord = $stringOfRecord. "\n $productid \t $productname \t $productrate \t $retailerMRP \t $retailerShowroomId \t $barcode \t $brandid \t $productsize \t $categorytypeid \t $subcategoryid \t $brandname \t $size \t $categorytype \t $avalableQty";
+        }
+
+        $dateTime = date("YmdHis");
+        header("Content-Type: application/vnd.ms-excel; charset=utf-8");
+        header("Content-Disposition: attachement; filename=$dateTime.xls");
+        header("Express: 0");
+        header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+        header("Cache-Control: private",false);
+
+        echo $stringOfRecord;
+    }
+ public function generatestockExcel(){
+
+        $categorytypeid = $this->input->get_post('categorytypeid');
+        $subcategoryid = $this->input->get_post('subcategoryid');
+        $brandid = $this->input->get_post('brandid');
+        $sizeid = $this->input->get_post('sizeid');
+        $barcode = $this->input->get_post('barcode');
+        $showroomId = $this->input->get_post('showroomId');
+        $noOfPage = "All";
+        $sessionUserTypeIdIsset = $this->session->has_userdata('usertypeid');
+        $adminid = "0";
+        if ($sessionUserTypeIdIsset == 1) {
+            $sessionUserTypeId = $this->session->userdata('usertypeid');
+            if ($sessionUserTypeId == 2) {
+                $adminid = $this->session->userdata('userid');
+            } else if ($sessionUserTypeId == 1) {
+                $adminid = $this->input->get_post('adminid');
+            } else if ($sessionUserTypeId == 4) {
+                $adminid = $this->session->userdata('adminid');
+            }
+        }
+        $ProductList = $this->users_model->getstockList($adminid, "0", $showroomId, $categorytypeid, $subcategoryid, $brandid, $sizeid, $barcode, $noOfPage);
+//        echo "<pre>";
+//        print_r($ProductList);
+//        echo "</pre>";
+        $stringOfRecord = "Category \t Quanty ";
+        for($m=0; $m<count($ProductList);$m++){
+            $subcategory = $ProductList[$m]['subcategory'];
+            $quantity = $ProductList[$m]['quantity'];
+            
+            $stringOfRecord = $stringOfRecord. "\n $subcategory \t $quantity ";
         }
 
         $dateTime = date("YmdHis");

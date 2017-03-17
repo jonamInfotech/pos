@@ -230,6 +230,8 @@
                 <th>Purchase Rate</th>
             <?php } ?>
  	    <th>BarCode Text</th>
+ 	    <th>Sales Count</th>
+ 	    <th>Change Status</th>
             <th>Edit</th>
             <th>Delete</th>
         </tr>
@@ -238,7 +240,7 @@
         <?php $deletUrl = base_url()."Product/addProductMaster"; ?>
         <?php $loadAddOrEditModalUrl = base_url()."Product/EditProduct"; ?>
         <?php $viewCostUrl = base_url()."Product/ViewRetailerCostDetails"; ?>
-        <?php for ($i = 0; $i < count($ProductList); $i++) { ?>
+        <?php  for ($i = 0; $i < count($ProductList); $i++) { ?>
             <tr>
 
                 <td><?php echo $i + 1; $productId = $ProductList[$i]['productid']; ?></td>
@@ -262,7 +264,7 @@
                     <?php echo $ProductList[$i]['categorytype']; ?>
                 </td>
                 <td>
-                    <?php echo $ProductList[$i]['subcategoryid']; ?>
+                    <?php echo $ProductList[$i]['subcategory']; ?>
                 </td>
                 <td>                    <?php echo $ProductList[$i]['size']; ?>                </td>
                 <?php if($sessionUserTypeId == 1 || $sessionUserTypeId==2) { ?>
@@ -270,6 +272,10 @@
                 <?php } ?>
 
 		<td><?php echo $ProductList[$i]['brandname']."&nbsp;".$ProductList[$i]['productname']."&nbsp;".$ProductList[$i]['size']; ?></td>
+		<td><?php echo $ProductList[$i]['qty']; ?></td>
+		<td><a href="javascript:void(0)" onclick="changeStatus(<?php echo $ProductList[$i]['productid']; ?>)">
+                       Remove
+                    </a></td>
                 <td>
                     <button class="btn btn-icon waves-effect waves-light btn-primary m-b-5" type="button" onclick="getAddOrEditModalContent('actionType=Edit&actionId=<?php echo $productId; ?>', '<?php echo $loadAddOrEditModalUrl; ?>')">
                         <i class="fa fa-edit"></i>

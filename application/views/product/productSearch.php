@@ -128,6 +128,7 @@
                 <button class="btn btn-icon waves-effect waves-light btn-rounded m-b-5" type="button" onclick="generateProductList()">
                     <i class="fa fa-download"></i>&nbsp;Generate Excel
                 </button>
+		
             </div>
         </div>
     </div>
