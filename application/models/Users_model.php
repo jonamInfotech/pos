@@ -352,7 +352,7 @@ class Users_model extends CI_Model
 
         if($noOfPage!="All"){
             $limitString = $noOfPage * 100;
-            $sql = $sql . " order by productid desc limit ".$limitString.", 1";
+            $sql = $sql . " order by productid desc limit ".$limitString.", 100";
         }
 
         $userQuery = $this->db->query($sql);
