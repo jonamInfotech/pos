@@ -145,9 +145,9 @@ class Users_model extends CI_Model
         }
 
         if ($responseStatus == 1) {
-            $successMsg = "<div class=\"alert alert-success alert-dismissable\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">×</button>" . $responseMsg . "</div>";
+            $successMsg = "<div class=\"alert alert-success alert-dismissable\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">Ã—</button>" . $responseMsg . "</div>";
         } else if ($responseStatus == 2) {
-            $successMsg = "<div class=\"alert alert-danger alert-dismissable\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">×</button>" . $responseMsg . "</div>";
+            $successMsg = "<div class=\"alert alert-danger alert-dismissable\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">Ã—</button>" . $responseMsg . "</div>";
         }
 
         return $successMsg;
@@ -318,7 +318,7 @@ class Users_model extends CI_Model
 
         $ProductList = array();
         
-        $sql = "SELECT t.productid, t.productname, t.productrate, t.barcode, t.productsize, t.categorytypeid,t.subcategoryid,sb.subcategory, t.active, t.adminid, t.brandid, a.showroomId, tb.brandname, ts.size, tc.categorytype, a.price as price, sum(pb.quantity) as quantity FROM tbl_product t Left JOIN tbl_productMapping a on t.productid = a.productid Left JOIN tbl_productBatch pb on a.productId = pb.productid AND a.showroomId=pb.showRoomId LEFT JOIN tbl_brand tb on tb.brandid=t.brandid LEFT JOIN tbl_sizemaster ts on ts.sizeid=t.productsize LEFT JOIN tbl_categorytype tc on tc.categorytypeid = t.categorytypeid INNER JOIN tbl_subCategory sb on sb.subcategoryid=t.subcategoryid WHERE  t.active = 'active' ";
+        $sql = "SELECT t.productid, t.productname, t.productrate, t.barcode, t.productsize, t.categorytypeid,t.subcategoryid, t.active, t.adminid, t.brandid, a.showroomId, tb.brandname, ts.size, tc.categorytype, a.price as price, sum(pb.quantity) as quantity FROM tbl_product t Left JOIN tbl_productMapping a on t.productid = a.productid Left JOIN tbl_productBatch pb on a.productId = pb.productid AND a.showroomId=pb.showRoomId LEFT JOIN tbl_brand tb on tb.brandid=t.brandid LEFT JOIN tbl_sizemaster ts on ts.sizeid=t.productsize LEFT JOIN tbl_categorytype tc on tc.categorytypeid = t.categorytypeid WHERE  t.active = 'active' ";
 
         if ($showroomId != "0" && $showroomId != "" && $showroomId != null) {
             $sql .= " and a.showroomId = '" . $showroomId . "' ";
@@ -352,7 +352,7 @@ class Users_model extends CI_Model
 
         if($noOfPage!="All"){
             $limitString = $noOfPage * 100;
-            $sql = $sql . " order by productid desc limit ".$limitString.", 10";
+            $sql = $sql . " order by productid desc limit ".$limitString.", 1";
         }
 
         $userQuery = $this->db->query($sql);
@@ -375,13 +375,19 @@ class Users_model extends CI_Model
             $ProductList[$k]['brandid'] = $row->brandid;
             $ProductList[$k]['productsize'] = $row->productsize;
             $ProductList[$k]['categorytypeid'] = $row->categorytypeid;
-            $ProductList[$k]['subcategory'] = $row->subcategory;
             $ProductList[$k]['subcategoryid'] = $row->subcategoryid;
+
             $ProductList[$k]['brandname'] = $row->brandname;
             $ProductList[$k]['size'] = $row->size;
             $ProductList[$k]['categorytype'] = $row->categorytype;
 
-
+		$subcategorQuery= "SELECT t.subcategory FROM `tbl_subCategory` t WHERE  t.subcategoryid='".$ProductList[$k]['subcategoryid']."' and t.active = 'active'  and adminId = '" . $adminid . "' ";
+		$subcategoryDetails = $this->db->query($subcategorQuery);
+		$subcategoryArray = $subcategoryDetails->result_array();
+		$subcategory=0;
+            if(count($subcategoryArray)>0){
+               $subcategory = $subcategoryArray[0]['subcategory'];
+		}
             $salesCountQuery = " SELECT sum(`qty`) as qty,productId, adminid  FROM `tbl_customerreceiptproduct` WHERE adminid='".$adminidFromQuery."' " ;
             if($productIdFromQuery>0 && $productIdFromQuery!="" && $productIdFromQuery!=null){
                 $salesCountQuery .=  " and productId = '".$productIdFromQuery."' ";
@@ -390,10 +396,9 @@ class Users_model extends CI_Model
             if($showroomIdFromQuery>0 && $showroomIdFromQuery!="" && $showroomIdFromQuery!=null){
                 $salesCountQuery .=  " and showroomId = '".$showroomIdFromQuery . "' ";
             }
-
+//            echo $salesCountQuery."<br>";
             $salesCountDetails = $this->db->query($salesCountQuery);
             $salesCountDetailsArray = $salesCountDetails->result_array();
-//            print_r($salesCountDetailsArray);
             $salesQty = 0;
             if(count($salesCountDetailsArray)>0){
                 $salesQty = $salesCountDetailsArray[0]['qty'];
@@ -405,11 +410,11 @@ class Users_model extends CI_Model
             $ProductList[$k]['qty'] = $salesQty;
             $ProductList[$k]['quantity'] = $totalPQty;
             $ProductList[$k]['avalableQty'] = $avalableQty;
-
+	    $ProductList[$k]['subcategory'] = $subcategory;
 
             $k++;
         }
-
+//echo count($ProductList);
 //        echo "<pre>";
 //        print_r($ProductList);
 //        echo "</pre>";
@@ -1148,62 +1153,7 @@ $result = $this->db->query($sqlnewupdate);
 	$msg="success";
 return $msg;
     }
-	public function getstockList($adminid, $productId, $showroomId, $categorytypeid,$subcategoryid, $brandid, $sizeid, $barcode , $noOfPage)
-    {
-
-        $ProductList = array();
-        
-        $sql = "SELECT SUM(k.quantity) as qty,l.subcategory FROM tbl_product j INNER JOIN tbl_productBatch k on k.productid= j.productid INNER JOIN tbl_subCategory l on l.subcategoryid= j.subcategoryid WHERE j.active ='active' GROUP BY l.subcategoryid";
-
-       
-
-         if ($productId != "0" && $productId != "" && $productId != null) {
-            $sql .= " and t.productid = '" . $productId . "' ";
-        }
-
-        //Search Product
-        if ($categorytypeid != "0" && $categorytypeid != "" && $categorytypeid != null) {
-            $sql .= " and t.categorytypeid = '" . $categorytypeid . "' ";
-        }
-        if ($subcategoryid != "0" && $subcategoryid != "" && $subcategoryid != null) {
-            $sql .= " and t.subcategoryid = '" . $subcategoryid . "' ";
-        }
-        if ($brandid != "0" && $brandid != "" && $brandid != null) {
-            $sql .= " and t.brandid = '" . $brandid . "' ";
-        }
-        if ($sizeid != "0" && $sizeid != "" && $sizeid != null) {
-            $sql .= " and t.productsize = '" . $sizeid . "' ";
-        }
-        if (($barcode != "" && $barcode != null) || $barcode =="0" ) {
-            $sql .= " and t.barcode = '" . $barcode . "' ";
-        }
-
-        
-
-        if($noOfPage!="All"){
-            $limitString = $noOfPage * 100;
-            $sql = $sql . " order by productid desc limit ".$limitString.", 11";
-        }
-
-        $userQuery = $this->db->query($sql);
-        $k = 0;
-
-
-        foreach ($userQuery->result() as $row) {
-
-          	  $ProductList[$k]['subcategory'] = $row->subcategory;
-                            $ProductList[$k]['quantity'] = $row->qty;       
-            $k++;
-        }
-//echo count($ProductList);
-    // echo "<pre>";
-    // print_r($ProductList);
-    //  echo "</pre>";
-
-        return $ProductList;
-    }
-
-	public function changeStatus($adminid, $productid)
+public function changeStatus($adminid, $productid)
     { 
 		$changeStatus = "UPDATE `tbl_product` SET `active`='deactive' WHERE adminid='".$adminid."' and productid='".$productid."'";
 		$this->db->query($changeStatus);
@@ -1213,3 +1163,4 @@ return $msg;
 }
 
 ?>
+
