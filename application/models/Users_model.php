@@ -313,12 +313,15 @@ class Users_model extends CI_Model
         $productDetailsArray = $productQuery->result_array();
         return $productDetailsArray;
     }
-    public function getProductList($adminid, $productId, $showroomId, $categorytypeid,$subcategoryid, $brandid, $sizeid, $barcode , $noOfPage)
+    public function getProductList($adminid, $productId, $showroomId, $categorytypeid,$subcategoryid, $brandid, $sizeid, $barcode , $rec_limit, $page)
     {
 
         $ProductList = array();
         
-        $sql = "SELECT t.productid, t.productname, t.productrate, t.barcode, t.productsize, t.categorytypeid,t.subcategoryid, t.active, t.adminid, t.brandid, a.showroomId, tb.brandname, ts.size, tc.categorytype, a.price as price, sum(pb.quantity) as quantity FROM tbl_product t Left JOIN tbl_productMapping a on t.productid = a.productid Left JOIN tbl_productBatch pb on a.productId = pb.productid AND a.showroomId=pb.showRoomId LEFT JOIN tbl_brand tb on tb.brandid=t.brandid LEFT JOIN tbl_sizemaster ts on ts.sizeid=t.productsize LEFT JOIN tbl_categorytype tc on tc.categorytypeid = t.categorytypeid WHERE  t.active = 'active' ";
+//        $sql = "SELECT t.productid, t.productname, t.productrate, t.barcode, t.productsize, t.categorytypeid,t.subcategoryid, t.active, t.adminid, t.brandid, a.showroomId, tb.brandname, ts.size, tc.categorytype, a.price as price, sum(pb.quantity) as quantity FROM tbl_product t Left JOIN tbl_productMapping a on t.productid = a.productid Left JOIN tbl_productBatch pb on a.productId = pb.productid AND a.showroomId=pb.showRoomId LEFT JOIN tbl_brand tb on tb.brandid=t.brandid LEFT JOIN tbl_sizemaster ts on ts.sizeid=t.productsize LEFT JOIN tbl_categorytype tc on tc.categorytypeid = t.categorytypeid WHERE  t.active = 'active' ";
+        $beforeSql = "SELECT t.productid, t.productname, t.productrate, t.barcode, t.productsize, t.categorytypeid,t.subcategoryid, t.active, t.adminid, t.brandid, a.showroomId, tb.brandname, ts.size, tc.categorytype, a.price as price, sum(pb.quantity) as quantity FROM tbl_product t Left JOIN tbl_productMapping a on t.productid = a.productid Left JOIN tbl_productBatch pb on a.productId = pb.productid AND a.showroomId=pb.showRoomId LEFT JOIN tbl_brand tb on tb.brandid=t.brandid LEFT JOIN tbl_sizemaster ts on ts.sizeid=t.productsize LEFT JOIN tbl_categorytype tc on tc.categorytypeid = t.categorytypeid";
+
+        $sql = " WHERE  t.active = 'active' ";
 
         if ($showroomId != "0" && $showroomId != "" && $showroomId != null) {
             $sql .= " and a.showroomId = '" . $showroomId . "' ";
@@ -348,14 +351,27 @@ class Users_model extends CI_Model
             $sql .= " and t.barcode = '" . $barcode . "' ";
         }
 
-        $sql = $sql . " group by t.productId";
 
-        if($noOfPage!="All"){
-            $limitString = $noOfPage * 100;
-            $sql = $sql . " order by productid desc limit ".$limitString.", 100";
+//        if($noOfPage!="All"){
+//            $limitString = $noOfPage * 100;
+//            $sql = $sql . " order by productid desc limit ".$limitString.", 100";
+//        }
+        $left_rec = 0;
+        if ($rec_limit != "All" && is_numeric($rec_limit)) {
+            $countquery = "select COUNT(t.productid) as count from tbl_product t " . $sql;
+            $paginationDataArray = self::paginationFunction($rec_limit, $page, $countquery);
+
+            $left_rec = $paginationDataArray['left_rec'];
+            $paginationLimit = $paginationDataArray['paginationLimit'];
+            $page = $paginationDataArray['page'];
+            $rec_limit = $paginationDataArray['rec_limit'];
+
+            $paginationSql = " order by productid desc ".$paginationLimit;
         }
 
-        $userQuery = $this->db->query($sql);
+        $sql = $sql ." group by t.productId". $paginationSql;
+
+        $userQuery = $this->db->query($beforeSql.$sql);
         $k = 0;
         foreach ($userQuery->result() as $row) {
             $productIdFromQuery = $row->productid;
@@ -419,7 +435,45 @@ class Users_model extends CI_Model
 //        print_r($ProductList);
 //        echo "</pre>";
 
-        return $ProductList;
+        $paginationArray['rec_limit'] = $rec_limit;
+        $paginationArray['left_rec'] = $left_rec;
+        $paginationArray['page'] = $page;
+        $paginationArray['resultArrayData'] = $ProductList;
+
+        return $paginationArray;
+    }
+
+    public function paginationFunction($rec_limit, $page, $countquery)
+    {
+
+        $paginationArray = array();
+
+        $executeQuery = $this->db->query($countquery);
+        $countArray = $executeQuery->result_array();
+        $rec_count = $countArray[0]['count'];
+
+        if ((isset($page) && $page != "") || $page == "0") {
+            $offset = $rec_limit * $page;
+            $page = $page + 1;
+        } else {
+            $page = 0;
+            $offset = 0;
+        }
+
+        $left_rec = $rec_count - ($page * $rec_limit);
+        if ($page == "" || $page == 0) {
+            $left_rec = $rec_count - (1 * $rec_limit);
+        }
+
+        $paginationLimit = " LIMIT $offset, $rec_limit ";
+
+        $paginationArray['left_rec'] = $left_rec;
+        $paginationArray['page'] = $page;
+        $paginationArray['rec_limit'] = $rec_limit;
+        $paginationArray['paginationLimit'] = $paginationLimit;
+
+        return $paginationArray;
+
     }
 
     public function getRetailerProductList($adminid, $productId, $showroomId, $categorytypeid, $brandid, $sizeid, $barcode)

@@ -78,7 +78,7 @@
 <input type="hidden" id="generatestockExcel" name="generatestockExcel" value="generatestockExcel">
 <input type="hidden" name="ajaxPostUrl" id="ajaxPostUrl" value="<?php echo base_url().'Product/productSearch'?>">
 <script>
-    var postData = "type=ProductList";
+    var postData = "type=ProductList&page=0";
 
     loadMastersList(postData);
     

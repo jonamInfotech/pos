@@ -494,8 +494,18 @@ class Product extends CI_Controller
             $brandid = $this->input->get_post('brandid');
             $sizeid = $this->input->get_post('sizeid');
             $barcode = $this->input->get_post('barcode');
-            $noOfPage = "0";
-            $ProductList = $this->users_model->getProductList($adminid, "0", $showroomId, $categorytypeid, $subcategoryid, $brandid, $sizeid, $barcode, $noOfPage);
+            $rec_limit = 100;
+            $page = $this->input->get_post('page');
+            $paginationArray = $this->users_model->getProductList($adminid, "0", $showroomId, $categorytypeid, $subcategoryid, $brandid, $sizeid, $barcode, $rec_limit, $page);
+            $left_rec = $paginationArray['left_rec'];
+            $ProductList = $paginationArray['resultArrayData'];
+            $rec_limit = $paginationArray['rec_limit'];
+
+            $dataheader['page'] = $page;
+            $dataheader['left_rec'] = $left_rec;
+            $dataheader['rec_limit'] = $rec_limit;
+
+
         }else if ($type == "ExpensesList") {
 	$ExpensesList = $this->users_model->getExpensesList($adminid, $actionId);
 		}			
@@ -899,8 +909,18 @@ class Product extends CI_Controller
         $actionId = "0";
         $actionType = $this->input->get_post('actionType');
         $productId = $this->input->get_post('actionId');
-        $noOfPage = "0";
-        $productArray = $this->users_model->getProductList($adminid, $productId, $retailerShowRoomId , "0", "0", "0", "0", null, $noOfPage);
+
+        $rec_limit= 100;
+        $page = 0;
+        $paginationArray = $this->users_model->getProductList($adminid, $productId, $retailerShowRoomId , "0", "0", "0", "0", null,  $rec_limit, $page);
+        $left_rec = $paginationArray['left_rec'];
+        $productArray = $paginationArray['resultArrayData'];
+        $rec_limit = $paginationArray['rec_limit'];
+
+        $dataheader['left_rec'] = $left_rec;
+        $dataheader['rec_limit'] = $rec_limit;
+        $dataheader['page'] = $page;
+
         $BrandArray = $this->users_model->getBrandList($adminid, $actionId);
         $SizeArray = $this->users_model->getSizeList($adminid, $actionId);
         $CategoryTypeArray = $this->users_model->getCategoryTypeList($adminid, $actionId);
@@ -930,7 +950,7 @@ class Product extends CI_Controller
         $sizeid = $this->input->get_post('sizeid');
         $barcode = $this->input->get_post('barcode');
         $showroomId = $this->input->get_post('showroomId');
-        $noOfPage = "All";
+//        $noOfPage = "All";
         $sessionUserTypeIdIsset = $this->session->has_userdata('usertypeid');
         $adminid = "0";
         if ($sessionUserTypeIdIsset == 1) {
@@ -943,7 +963,19 @@ class Product extends CI_Controller
                 $adminid = $this->session->userdata('adminid');
             }
         }
-        $ProductList = $this->users_model->getProductList($adminid, "0", $showroomId, $categorytypeid, $subcategoryid, $brandid, $sizeid, $barcode, $noOfPage);
+
+        $rec_limit = "All";
+        $page = 0;
+        $paginationArray = $this->users_model->getProductList($adminid, "0", $showroomId, $categorytypeid, $subcategoryid, $brandid, $sizeid, $barcode,  $rec_limit, $page);
+        $left_rec = $paginationArray['left_rec'];
+        $ProductList = $paginationArray['resultArrayData'];
+        $rec_limit = $paginationArray['rec_limit'];
+
+        $dataheader['left_rec'] = $left_rec;
+        $dataheader['rec_limit'] = $rec_limit;
+        $dataheader['page'] = $page;
+
+
 //        echo "<pre>";
 //        print_r($ProductList);
 //        echo "</pre>";
