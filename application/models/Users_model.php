@@ -323,10 +323,6 @@ class Users_model extends CI_Model
 
         $sql = " WHERE  t.active = 'active' ";
 
-        if ($showroomId != "0" && $showroomId != "" && $showroomId != null) {
-            $sql .= " and a.showroomId = '" . $showroomId . "' ";
-        }
-
         if ($adminid != "0" && $adminid != "" && $adminid != null) {
             $sql .= " and t.adminid = '" . $adminid . "' ";
         }
@@ -367,6 +363,10 @@ class Users_model extends CI_Model
             $rec_limit = $paginationDataArray['rec_limit'];
 
             $paginationSql = " order by productid desc ".$paginationLimit;
+        }
+
+        if ($showroomId != "0" && $showroomId != "" && $showroomId != null) {
+            $sql .= " and a.showroomId = '" . $showroomId . "' ";
         }
 
         $sql = $sql ." group by t.productId". $paginationSql;
